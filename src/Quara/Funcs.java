@@ -1,7 +1,6 @@
 package Quara;
 
 import java.io.FileWriter;
-
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -24,6 +23,7 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 
+
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.util.store.FileDataStoreFactory;
 
@@ -31,7 +31,7 @@ import com.google.api.client.util.store.FileDataStoreFactory;
 
 /**
  * @author Ben Horn
- * @since 1/2018
+ * @since 3/2018
  *
  */
 public abstract class Funcs {
@@ -40,8 +40,9 @@ public abstract class Funcs {
 	/**
 	 *  the visibility of the webdriver window. by WindowState enum.
 	 */
-	WindowState window = WindowState.visible;
-
+	static WindowState window = WindowState.visible;
+	final static String url ="https://www.quora.com/";
+	static WebDriver driver;
 
 	/**
 	 * start webDriver with url in this.window of visability
@@ -196,7 +197,7 @@ public abstract class Funcs {
 	 * @param web element
 	 * @return false if faild.
 	 */
-	public boolean moveTo2(WebDriver driver, WebElement we){
+	public static boolean moveTo2(WebDriver driver, WebElement we){
 		try{
 			JavascriptExecutor jse = (JavascriptExecutor)driver;
 			jse.executeScript("arguments[0].scrollIntoView()", we); 
@@ -266,7 +267,7 @@ public abstract class Funcs {
 	 * thread sleep for mil milliseconds
 	 * @param mil
 	 */
-	public void sleep(int mil){
+	public static void sleep(int mil){
 		try {
 			Thread.sleep(mil);
 		} catch (InterruptedException e) {
