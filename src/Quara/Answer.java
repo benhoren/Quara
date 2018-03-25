@@ -62,23 +62,29 @@ public class Answer extends Funcs{
 		String name ="", link = "", slogan="", date="";
 
 		try{
+			WebElement more = ansElement.findElement(By.xpath(".//*[contains(@class,'ui_qtext_truncated')]"));
+			moveTo2(driver,more);
+			sleep(1500);
+			more.click();
+			sleep(1500);
+			System.out.println("click expan");
 
-			//div[contains(@id,'answer_content')]
+			try{
+				WebElement closePhoto = driver.findElement(By.xpath("//*[@class='photo_modal_close active']"));
+				closePhoto.click();
+				System.out.println("closephoto");
+			}catch(Exception e){}
+
+		}catch(Exception e){}
+
+
+		try{
 			WebElement more = ansElement.findElement(By.xpath(".//*[@class='ui_qtext_more_link']"));
 			moveTo2(driver,more);
 			sleep(1500);
 			more.click();
 			sleep(1500);
 			System.out.println("click (more)");
-		}catch(Exception e){}
-
-		try{
-			WebElement more = ansElement.findElement(By.xpath(".//div[contains(@id,'answer_content')]"));
-			moveTo2(driver,more);
-			sleep(1500);
-			more.click();
-			sleep(1500);
-			System.out.println("click body");
 		}catch(Exception e){}
 
 		try{
@@ -176,7 +182,12 @@ public class Answer extends Funcs{
 
 		ArrayList<Comment> cmmts = null;
 		try{
+			System.out.println("COMM");
 			cmmts = getComments(ansElement);
+
+			if(cmmts!=null)
+				System.out.println(cmmts.size());
+			System.out.println("null");
 		}catch(Exception e){e.printStackTrace();}
 
 		Answer answer = new Answer(serialQuestion, name, slogan, link, body, date,
@@ -187,6 +198,7 @@ public class Answer extends Funcs{
 
 	public static ArrayList<Comment> getComments(WebElement ansElement){
 
+		ArrayList<Comment> cmmts = new ArrayList<Comment>();
 
 		try{
 
@@ -194,22 +206,28 @@ public class Answer extends Funcs{
 			moveTo2(driver, section);
 			sleep(1500);
 
+			System.out.println("here");
+			
 			try{
-				WebElement prv = section.findElement(By.xpath(".//*[@class='toggle_link toggle_all']"));
+				WebElement prv = section.findElement(By.xpath(".//*[@class='comments_preview_toggle']"));
 				moveTo2(driver, prv);
 				sleep(1500);
 				prv.click();
 				sleep(2500);
+
+				System.err.println("prev");
 			}catch(Exception e){}
 
 			try{
-				WebElement all = section.findElement(By.xpath(".//*[@class='comments_preview_toggle']"));
-				moveTo2(driver, all);
+				WebElement all = section.findElement(By.xpath(".//*[@class='toggle_link toggle_all']"));
+				moveTo(driver, all);
 				sleep(1500);
-				all.click();
+				clickInvisible(driver, all);
+//				all.click();
 				sleep(2500);
-			}catch(Exception e){}
 
+				System.err.println("all");
+			}catch(Exception e){e.printStackTrace();}
 
 			int tries = 0;
 			for(int i=0; i<1000; i++){
@@ -219,6 +237,8 @@ public class Answer extends Funcs{
 					sleep(1000);
 					morecmm.click();
 					sleep(2000);
+
+					System.err.println("more");
 				}catch(Exception e){tries++; if(tries==5) break;}
 			}
 
@@ -228,6 +248,8 @@ public class Answer extends Funcs{
 				sleep(1000);
 				coll.click();
 				sleep(2000);
+
+				System.err.println("collapse");
 			}catch(Exception e){}
 
 			tries = 0;
@@ -238,6 +260,8 @@ public class Answer extends Funcs{
 					sleep(1000);
 					showchild.click();
 					sleep(2000);
+
+					System.err.println("child");
 				}catch(Exception e){tries++; if(tries==5) break;}
 			}
 
@@ -250,13 +274,54 @@ public class Answer extends Funcs{
 					sleep(1000);
 					expand.click();
 					sleep(2000);
+
+					System.err.println("morecomm");
 				}catch(Exception e){tries++; if(tries==5) break;}
 			}
 
 
+			try{
+				getComments(cmmts, section);
+			}catch(Exception e){e.printStackTrace(); return cmmts;}
 		}catch(Exception e){e.printStackTrace(); return null;}
 
-		return null;
+		return cmmts;
+	}
+
+
+
+	private static void getComments(ArrayList<Comment> comments, WebElement section) {
+
+		System.out.println("COMMENTS");		
+		Comment.counter = 1;
+
+		try{
+			ArrayList<WebElement> cmmts = (ArrayList<WebElement>) 
+					section.findElements(By.xpath(".//*[contains(@id,'container_all')]//*[contains(@class,'comment_list_level_0')]//*[@class='comment_contents']"));
+
+			System.out.println("web comment "+cmmts.size());
+			
+			Comment c=null;
+			String name, body;
+			for(int i=0; i<cmmts.size(); i++){
+				name=""; body="";
+				try{
+					WebElement author = cmmts.get(i).findElement(By.className("author_name"));
+					WebElement content = cmmts.get(i).findElement(By.xpath(".//span[@class='ui_qtext_rendered_qtext']"));
+
+					name = author.getText();
+					body = content.getText();
+
+					c = new Comment(name, body);
+					comments.add(c);
+				}catch(Exception e){e.printStackTrace();}
+
+			}
+
+		}catch(Exception e){e.printStackTrace();}
+
+
+
 	}
 
 

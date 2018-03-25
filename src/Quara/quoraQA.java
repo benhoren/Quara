@@ -10,6 +10,9 @@ public class quoraQA extends Funcs{
 
 
 	public ArrayList<Question> start(ArrayList<String> links, int minViews, int minUpvote, int num){
+		if(links == null)
+			return null;
+		
 		ArrayList<Question> questions = new ArrayList<Question>();
 		Question q;
 		for(String link: links){
@@ -93,7 +96,7 @@ public class quoraQA extends Funcs{
 				}
 			}	
 		}
-		question.answersNum = answerCount;
+		question.answersNum = found;
 		question.answers = Answers;
 	}
 

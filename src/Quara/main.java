@@ -17,12 +17,11 @@ public class Main {
 	static String folderName ="output";
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 
-		String text = "computer";
+		String text = "windows";
 		String topic = "";
 		int  qnum = 3;
-		int  anum = 3;
+		int  anum = 10;
 		int minViews = 10;
 		int minUpvotes = 0;
 		int minFollows = 0;
@@ -33,14 +32,21 @@ public class Main {
 
 	public static void play(String text, String topic, int minFollows, int minViews, int minUpvote, int qnum, int anum){
 
-		readyFiles();
+		
 		
 		quaraSearch qs = new quaraSearch();
 		ArrayList<String> links =qs.start(text, topics(topic),minFollows, qnum);
 		System.out.println();
+		
+		if(links == null || links.size() == 0){
+			System.err.println("NO RESULTS");
+			return;
+		}
 
 		quoraQA qQA = new quoraQA();
 		ArrayList<Question> questions = qQA.start(links, minViews, minUpvote, anum);
+		
+		readyFiles();
 		
 		for(int i=0; i<questions.size(); i++){
 			Funcs.StringArrToLastRow(questions.get(i).toArray(), QuestionsSheet);
@@ -54,7 +60,7 @@ public class Main {
 	}
 
 	private static String[] topics(String topic){
-		String[] topics = topic.split(",");
+		String[] topics = topic.trim().split(",");
 		for(int i=0; i<topics.length; i++)
 			topics[i] = topics[i].trim();
 		return topics;

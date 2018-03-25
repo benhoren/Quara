@@ -155,7 +155,7 @@ public abstract class Funcs {
 	 * @param driver -webfriver
 	 * @param element -WebElement to click. 
 	 */
-	public void clickInvisible(WebDriver driver, WebElement element){
+	public static void clickInvisible(WebDriver driver, WebElement element){
 		JavascriptExecutor js = (JavascriptExecutor)driver;
 		js.executeScript("arguments[0].click();", element);
 	}
@@ -180,7 +180,7 @@ public abstract class Funcs {
 	 * @param driver
 	 * @param web element
 	 */
-	public boolean moveTo(WebDriver driver, WebElement we){
+	public static boolean moveTo(WebDriver driver, WebElement we){
 		Actions actions = new Actions(driver);
 		try{
 			actions.moveToElement(we).perform();
