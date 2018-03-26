@@ -91,6 +91,7 @@ public class quoraQA extends Funcs{
 				if(addAns){
 					found++;
 					answer.serialNum = found;
+					Comment.fixSerialNums(answer.comments,question.serialNum,answer.serialNum);
 					System.out.println("Question "+question.serialNum+" answer "+found);
 					Answers.add(answer);
 				}

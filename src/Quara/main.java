@@ -32,12 +32,12 @@ public class Main {
 
 	public static void play(String text, String topic, int minFollows, int minViews, int minUpvote, int qnum, int anum){
 
-		
-		
+
+
 		quaraSearch qs = new quaraSearch();
 		ArrayList<String> links =qs.start(text, topics(topic),minFollows, qnum);
 		System.out.println();
-		
+
 		if(links == null || links.size() == 0){
 			System.err.println("NO RESULTS");
 			return;
@@ -45,13 +45,19 @@ public class Main {
 
 		quoraQA qQA = new quoraQA();
 		ArrayList<Question> questions = qQA.start(links, minViews, minUpvote, anum);
-		
+
 		readyFiles();
-		
+
 		for(int i=0; i<questions.size(); i++){
 			Funcs.StringArrToLastRow(questions.get(i).toArray(), QuestionsSheet);
+
 			for(int j=0; j<questions.get(i).answers.size(); j++){
 				Funcs.StringArrToLastRow(questions.get(i).answers.get(j).toArray(), AnswersSheet);
+				try{
+					for(int k=0; k<questions.get(i).answers.get(j).comments.size(); k++){
+						Funcs.StringArrToLastRow(questions.get(i).answers.get(j).comments.get(k).toArr(), CommentsSheet);
+					}
+				}catch(Exception e){System.err.println(e);}
 			}
 		}
 
@@ -115,20 +121,26 @@ public class Main {
 	static FileOutputStream outputStream;
 	static XSSFSheet QuestionsSheet;
 	static XSSFSheet AnswersSheet;
+	static XSSFSheet CommentsSheet;
 
 	public static void startWriters(){
 		workbook = new XSSFWorkbook();
-		//{serialNum+"", link, question, stringTags(), views+"", followers+"", answersNum+""};
 
 		QuestionsSheet = workbook.createSheet("Questions");
-		 AnswersSheet = workbook.createSheet("Answers");
+		AnswersSheet = workbook.createSheet("Answers");
+		CommentsSheet = workbook.createSheet("Comments");
 
+		//{serialNum+"", link, question, stringTags(), views+"", followers+"", answersNum+""};
 		String[] ques={"num.","Link","Question","Tags","Views","Followers","Number of answers"};
 		Funcs.StringArrToLastRow(ques, QuestionsSheet);
 
 		//questionNum+"", serialNum+"", name, slogan, date, orgQuestion, body, views+"", upvote+""};
 		String[] answ={"question number","num.","name","slogan","date","original question", "answer","views","upvotes"};
 		Funcs.StringArrToLastRow(answ, AnswersSheet);
+
+		//{questionNum+"", answerNum+"", serialNum+"", name, body};
+		String[] cmmt={"question number","answer num.","num.","name","body"};
+		Funcs.StringArrToLastRow(cmmt, CommentsSheet);
 	}
 
 
