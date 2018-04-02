@@ -1,10 +1,11 @@
 package Quara;
 
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-public class Profile extends Funcs{
+public class Profile extends Funcs implements excelData{
 	String name;
 	String slogan;
 	String link;
@@ -66,14 +67,31 @@ public class Profile extends Funcs{
 		this.topics = topics;
 		this.edits = edits;
 	}
-	
-	
 
-/**
- * get all the info from profile
- * @param link to profile
- * @return profile in Profile type
- */
+
+
+	@Override
+	public String[] toArray() {
+		// TODO Auto-generated method stub
+		String[] arr = {name};
+		return arr;
+	}
+
+
+	@Override
+	public void toSheet(XSSFSheet sheet) {
+		// TODO Auto-generated method stub
+
+	}
+
+
+
+
+	/**
+	 * get all the info from profile
+	 * @param link to profile
+	 * @return profile in Profile type
+	 */
 	public Profile getProfile(String link){
 		Profile p = null;
 		driver.get(link);
@@ -230,7 +248,7 @@ public class Profile extends Funcs{
 			}catch(Exception e){e.printStackTrace();}
 		}catch(Exception e){System.err.println("edits");}
 
-		
+
 		p = new Profile(name, slogan, link, work, school, live, desc, views,
 				answers, questions, activity, posts, blogs, followers, following, topics, edits);
 
@@ -246,7 +264,10 @@ public class Profile extends Funcs{
 
 
 
-	
+
+
+
+
 
 
 }

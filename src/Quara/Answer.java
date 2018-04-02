@@ -2,10 +2,11 @@ package Quara;
 
 import java.util.ArrayList;
 
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
-public class Answer extends Funcs{
+public class Answer extends Funcs implements excelData{
 
 	int serialNum = 0;
 	int questionNum = 0;
@@ -47,8 +48,17 @@ public class Answer extends Funcs{
 		this.upvote = upvote;
 		this.comments = comments;
 	}
-
-
+	
+	
+	public static void toExcel(ArrayList<Answer> answerslist, XSSFSheet a, XSSFSheet p, XSSFSheet c) {
+		for(int i=0; i<answerslist.size(); i++){
+			answerslist.get(i).toSheet(a);
+			Comment.toExcel(answerslist.get(i).comments, c);
+		}
+		
+	}
+	
+	@Override
 	public String[] toArray(){
 		String[] arr={questionNum+"", serialNum+"", name, slogan, date, orgQuestion, body, views+"", upvote+""};
 
@@ -56,11 +66,19 @@ public class Answer extends Funcs{
 	}
 
 
+	@Override
+	public void toSheet(XSSFSheet sheet) {
+		String[] arr = toArray();
+		StringArrToLastRow(arr, sheet);	
+	}
+
 
 
 	public static Answer getAnswer(WebElement ansElement, int serialQuestion) {
 		String name ="", link = "", slogan="", date="";
 
+		System.out.println("get ANSwer");
+		
 		try{
 			WebElement more = ansElement.findElement(By.xpath(".//*[contains(@class,'ui_qtext_truncated')]"));
 			moveTo2(driver,more);
@@ -88,7 +106,7 @@ public class Answer extends Funcs{
 		}catch(Exception e){}
 
 		try{
-			WebElement header = ansElement.findElement(By.xpath(".//*[contains(@class,'AnswerHeader')]"));
+			WebElement header = ansElement.findElement(By.xpath(".//*[contains(@class,'ContentHeader')]"));
 
 			try{
 				WebElement user = header.findElement(By.xpath(".//*[@class='feed_item_answer_user']//*[@class='user']"));
@@ -127,7 +145,8 @@ public class Answer extends Funcs{
 			}catch(Exception e){e.printStackTrace();}
 
 
-		}catch(Exception e){e.printStackTrace(); return null;}
+		}catch(Exception e){System.err.println("no header " +e);
+			 return null;}
 
 		String organs ="";
 		try{
@@ -177,13 +196,13 @@ public class Answer extends Funcs{
 
 		if(body == null || body.trim().isEmpty())
 			return null;
-		if(name == null || name.trim().isEmpty() || name.equals("David Moore"))
-			return null;
+//		if(name == null || name.trim().isEmpty() || name.equals("David Moore"))
+//			return null;
 
 		ArrayList<Comment> cmmts = null;
 		try{
 			System.out.println("COMM");
-			cmmts = getComments(ansElement);
+			cmmts = Comment.getComments(ansElement);
 
 			if(cmmts!=null)
 				System.out.println(cmmts.size());
@@ -196,133 +215,10 @@ public class Answer extends Funcs{
 		return answer;
 	}
 
-	public static ArrayList<Comment> getComments(WebElement ansElement){
-
-		ArrayList<Comment> cmmts = new ArrayList<Comment>();
-
-		try{
-
-			WebElement section = ansElement.findElement(By.xpath(".//*[contains(@class,'threaded_comments')]"));
-			moveTo2(driver, section);
-			sleep(1500);
-
-			System.out.println("here");
-			
-			try{
-				WebElement prv = section.findElement(By.xpath(".//*[@class='comments_preview_toggle']"));
-				moveTo2(driver, prv);
-				sleep(1500);
-				prv.click();
-				sleep(2500);
-
-				System.err.println("prev");
-			}catch(Exception e){}
-
-			try{
-				WebElement all = section.findElement(By.xpath(".//*[@class='toggle_link toggle_all']"));
-				moveTo(driver, all);
-				sleep(1500);
-				clickInvisible(driver, all);
-//				all.click();
-				sleep(2500);
-
-				System.err.println("all");
-			}catch(Exception e){e.printStackTrace();}
-
-			int tries = 0;
-			for(int i=0; i<1000; i++){
-				try{
-					WebElement morecmm = section.findElement(By.xpath(".//*[contains(@class,'comments_more_button')]"));
-					moveTo2(driver, morecmm);
-					sleep(1000);
-					morecmm.click();
-					sleep(2000);
-
-					System.err.println("more");
-				}catch(Exception e){tries++; if(tries==5) break;}
-			}
-
-			try{
-				WebElement coll = section.findElement(By.xpath("//*[@class='collapsed_comments_link']"));
-				moveTo2(driver, coll);
-				sleep(1000);
-				coll.click();
-				sleep(2000);
-
-				System.err.println("collapse");
-			}catch(Exception e){}
-
-			tries = 0;
-			for(int i=0; i<1000; i++){
-				try{
-					WebElement showchild = section.findElement(By.xpath(".//*[@class='show_child_link']"));
-					moveTo2(driver, showchild);
-					sleep(1000);
-					showchild.click();
-					sleep(2000);
-
-					System.err.println("child");
-				}catch(Exception e){tries++; if(tries==5) break;}
-			}
+	
 
 
-			tries = 0;
-			for(int i=0; i<1000; i++){
-				try{
-					WebElement expand = section.findElement(By.xpath(".//*[@class='ui_qtext_more_link']"));
-					moveTo2(driver, expand);
-					sleep(1000);
-					expand.click();
-					sleep(2000);
-
-					System.err.println("morecomm");
-				}catch(Exception e){tries++; if(tries==5) break;}
-			}
-
-
-			try{
-				getComments(cmmts, section);
-			}catch(Exception e){e.printStackTrace(); return cmmts;}
-		}catch(Exception e){e.printStackTrace(); return null;}
-
-		return cmmts;
-	}
-
-
-
-	private static void getComments(ArrayList<Comment> comments, WebElement section) {
-
-		System.out.println("COMMENTS");		
-		Comment.counter = 1;
-
-		try{
-			ArrayList<WebElement> cmmts = (ArrayList<WebElement>) 
-					section.findElements(By.xpath(".//*[contains(@id,'container_all')]//*[contains(@class,'comment_list_level_0')]//*[@class='comment_contents']"));
-
-			System.out.println("web comment "+cmmts.size());
-			
-			Comment c=null;
-			String name, body;
-			for(int i=0; i<cmmts.size(); i++){
-				name=""; body="";
-				try{
-					WebElement author = cmmts.get(i).findElement(By.className("author_name"));
-					WebElement content = cmmts.get(i).findElement(By.xpath(".//span[@class='ui_qtext_rendered_qtext']"));
-
-					name = author.getText();
-					body = content.getText();
-
-					c = new Comment(name, body);
-					comments.add(c);
-				}catch(Exception e){e.printStackTrace();}
-
-			}
-
-		}catch(Exception e){e.printStackTrace();}
-
-
-
-	}
+	
 
 
 

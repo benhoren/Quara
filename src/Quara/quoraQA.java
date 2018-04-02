@@ -40,15 +40,16 @@ public class quoraQA extends Funcs{
 		ArrayList<Answer> Answers = new ArrayList<Answer>();
 
 		ArrayList <WebElement> results = (ArrayList <WebElement>)
-				driver.findElements(By.xpath("//*[@class='paged_list_wrapper']/*[@class='pagedlist_item']/div"));
+				driver.findElements(By.xpath("//*[@class='paged_list_wrapper']/*[@class='pagedlist_item']/div/div"));
 
+		sleep(3000);
 		int i=0;
 		int r = 0;
 		int found = 0;
 		int tries = 0;
 		int answerCount = 0;
 		Answer answer = null;
-		while(found <= num){
+		while(found < num){
 			if(r>=maxSearch)
 				break;
 			r++;
@@ -65,7 +66,7 @@ public class quoraQA extends Funcs{
 
 				sleep(5000);
 				results = (ArrayList <WebElement>)
-						driver.findElements(By.xpath("//*[@class='paged_list_wrapper']/*[@class='pagedlist_item']/div"));
+						driver.findElements(By.xpath("//*[@class='paged_list_wrapper']/*[@class='pagedlist_item']/div/div"));
 
 				if(size == results.size())
 					tries++;
@@ -83,7 +84,7 @@ public class quoraQA extends Funcs{
 
 				if(answer!=null){
 					answerCount++;
-					if(answer.upvote > minUpvotes && answer.views > minViews)
+					if(answer.upvote >= minUpvotes && answer.views >= minViews)
 						addAns = true;
 				}
 				i++;

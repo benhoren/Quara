@@ -18,15 +18,15 @@ public class Main {
 
 	public static void main(String[] args) {
 
-		String text = "windows";
+		String text = "sport";
 		String topic = "";
-		int  qnum = 3;
-		int  anum = 10;
-		int minViews = 10;
+		int  qnum = 1;
+		int  anum = 1;
+		int minViews = 0;
 		int minUpvotes = 0;
-		int minFollows = 0;
+		int minFollows = 250;
 
-		play(text, topic,minFollows, minViews, minUpvotes, qnum, anum);
+		play(text, topic, minFollows, minViews, minUpvotes, qnum, anum);
 	}
 
 
@@ -48,18 +48,21 @@ public class Main {
 
 		readyFiles();
 
-		for(int i=0; i<questions.size(); i++){
-			Funcs.StringArrToLastRow(questions.get(i).toArray(), QuestionsSheet);
-
-			for(int j=0; j<questions.get(i).answers.size(); j++){
-				Funcs.StringArrToLastRow(questions.get(i).answers.get(j).toArray(), AnswersSheet);
-				try{
-					for(int k=0; k<questions.get(i).answers.get(j).comments.size(); k++){
-						Funcs.StringArrToLastRow(questions.get(i).answers.get(j).comments.get(k).toArr(), CommentsSheet);
-					}
-				}catch(Exception e){System.err.println(e);}
-			}
-		}
+		Question.toExcel(questions, QuestionsSheet, AnswersSheet, ProfileSheet, CommentsSheet);
+		
+//		for(int i=0; i<questions.size(); i++){
+//			Funcs.StringArrToLastRow(questions.get(i).toArray(), QuestionsSheet);
+//
+//			for(int j=0; j<questions.get(i).answers.size(); j++){
+//				Funcs.StringArrToLastRow(questions.get(i).answers.get(j).toArray(), AnswersSheet);
+//				try{
+//					for(int k=0; k<questions.get(i).answers.get(j).comments.size(); k++){
+//						Funcs.StringArrToLastRow(questions.get(i).answers.get(j).comments.get(k).toArr(), CommentsSheet);
+//				
+//					}
+//				}catch(Exception e){System.err.println(e);}
+//			}
+//	}
 
 
 		closeWriters();
@@ -121,6 +124,7 @@ public class Main {
 	static FileOutputStream outputStream;
 	static XSSFSheet QuestionsSheet;
 	static XSSFSheet AnswersSheet;
+	static XSSFSheet ProfileSheet;
 	static XSSFSheet CommentsSheet;
 
 	public static void startWriters(){

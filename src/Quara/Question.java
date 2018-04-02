@@ -2,10 +2,11 @@ package Quara;
 
 import java.util.ArrayList;
 
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
-public class Question extends Funcs{
+public class Question extends Funcs implements excelData{
 
 	static int counter = 1;
 	
@@ -49,11 +50,25 @@ public class Question extends Funcs{
 		this.tags = tags;
 	}
 	
-	public String[] toArray(){
 	
+	
+	public static void toExcel(ArrayList<Question> list, XSSFSheet q, XSSFSheet a, XSSFSheet p, XSSFSheet c){
+		for(int i=0; i<list.size(); i++){
+			list.get(i).toSheet(q);
+			Answer.toExcel(list.get(i).answers, a, p, c);	
+		}
+	}
+
+
+	@Override
+	public void toSheet(XSSFSheet sheet) {
+		String[] arr = toArray();
+		StringArrToLastRow(arr, sheet);	
+	}
+	
+	public String[] toArray(){
 		if(question == null) question="";
 		String[] arr = {serialNum+"",link, question, stringTags(), views+"", followers+"", answersNum+""};
-		
 		return arr;
 		
 	}
@@ -145,7 +160,7 @@ public class Question extends Funcs{
 
 	public static String getQuestion(){
 		String str="";
-		WebElement title = driver.findElement(By.xpath("//*[@class='QuestionArea']//*[@class='rendered_qtext']"));
+		WebElement title = driver.findElement(By.xpath("//*[contains(@class,'QuestionArea')]//*[@class='rendered_qtext']"));
 		str= title.getText();
 		return str;
 	}
@@ -190,6 +205,9 @@ public class Question extends Funcs{
 
 		return num;
 	}
+
+
+	
 	
 	
 	

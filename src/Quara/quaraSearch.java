@@ -63,42 +63,55 @@ public class quaraSearch extends Funcs{
 
 		boolean flag = false;
 
-		for(int i=0; i<5; i++){
-			for(int j=0; i<5; j++){
-				try{
-					System.out.println("nav");
-					driver.get(url);
-					flag = true;
-				}	catch(Exception e){System.err.println("WEBDRIVER FAILD");}
-				if(flag) break;
-			}
-			if(!flag){
-				try{
-					driver.close();
-					driver.quit();
-				}catch(Exception e){}
-				
-				driver = startWebDriver(url);
-			}
-			else break;
+
+//		for(int i=0; i<5; i++){
+		try{
+			System.out.println("nav");
+			driver.get(url);
+			flag = true;
+		}	catch(Exception e){System.err.println("WEBDRIVER FAILD");}
+
+
+		if(!flag){
+			try{
+				driver.close();
+				driver.quit();
+			}catch(Exception e){}
+
+			driver = startWebDriver(url);
+			login();
 		}
-		if(!flag) return false;
+
 		System.out.println("nav end");
-
-
+		
+//	}
 		WebElement field = driver.findElement(By.xpath("//textarea[@class='selector_input text']"));
 		field.click();
 		field.clear();
 		field.sendKeys(textToSearch);
 		sleep(5000);
 
-				field.sendKeys(Keys.RETURN);
-//		WebElement search = driver.findElement(By.xpath("//*[@class='results_wrapper']//*[@class='selector_result search']"));
-//		search.click();
+		field.sendKeys(Keys.RETURN);
+		//		WebElement search = driver.findElement(By.xpath("//*[@class='results_wrapper']//*[@class='selector_result search']"));
+		//		search.click();
 		sleep(3000);
 
-		WebElement qa = driver.findElement(By.xpath("//*[@data-value='question']"));
-		qa.click();
+		try{
+			WebElement qa = driver.findElement(By.xpath("//*[@data-value='question']"));
+			qa.click();
+		}catch(Exception e){
+			field = driver.findElement(By.xpath("//textarea[@class='selector_input text']"));
+			field.click();
+			field.clear();
+			field.sendKeys(textToSearch);
+			sleep(5000);
+
+			field.sendKeys(Keys.RETURN);
+			WebElement qa = driver.findElement(By.xpath("//*[@data-value='question']"));
+			qa.click();
+			sleep(3000);
+		}
+
 
 		return true;
 	}
