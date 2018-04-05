@@ -6,6 +6,9 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 public class Profile extends Funcs implements excelData{
+	int questionNum;
+	int answerNum;
+	
 	String name;
 	String slogan;
 	String link;
@@ -44,7 +47,7 @@ public class Profile extends Funcs implements excelData{
 	 * @param topics
 	 * @param edits
 	 */
-	public Profile(String name, String slogan, String link, String work,
+	public Profile(String name,String slogan, String link, String work,
 			String live, String study, String about,int views, int answers,
 			int questions, int activity, int posts, int blogs, int followers,
 			int following, int topics, int edits) {
@@ -73,15 +76,16 @@ public class Profile extends Funcs implements excelData{
 	@Override
 	public String[] toArray() {
 		// TODO Auto-generated method stub
-		String[] arr = {name};
+		String[] arr = {""+questionNum, ""+answerNum, link, name, slogan, work, study, live, about, ""+views,
+				""+answers, ""+questions, ""+activity, ""+posts, ""+blogs, ""+followers, ""+following, ""+topics,""+ edits};
 		return arr;
 	}
 
 
 	@Override
 	public void toSheet(XSSFSheet sheet) {
-		// TODO Auto-generated method stub
-
+		String[] arr = toArray();
+		StringArrToLastRow(arr, sheet);
 	}
 
 
@@ -92,7 +96,7 @@ public class Profile extends Funcs implements excelData{
 	 * @param link to profile
 	 * @return profile in Profile type
 	 */
-	public Profile getProfile(String link){
+	public static Profile getProfile(String link){
 		Profile p = null;
 		driver.get(link);
 		String name="", slogan="", work="", school="", live="", desc="";
@@ -106,7 +110,7 @@ public class Profile extends Funcs implements excelData{
 
 		//slogan
 		try{
-			WebElement slgn = driver.findElement(By.xpath("//*[@class='header_content']//*[@class='user']"));
+			WebElement slgn = driver.findElement(By.xpath("//*[@class='header_content']//*[contains(@class,'IdentityCredential')]"));
 			slogan = slgn.getText();
 		}catch(Exception e){System.err.println("slogan");}
 
@@ -142,13 +146,19 @@ public class Profile extends Funcs implements excelData{
 				view = view.substring(0, view.length()-1);
 				letter = 1000;
 			}
+			if(view.contains("m")){
+				view = view.substring(0, view.length()-1);
+				letter = 1000000;
+			}
 
 			double d=0;
 			try{
+				System.out.println("view: "+view);
 				d= Double.parseDouble(view);
+				System.out.println("view: "+d);
 			}catch(Exception e){e.printStackTrace();}
 
-			views =(int) d*letter;
+			views =(int) (d*letter);
 		}catch(Exception e){System.err.println("views");}
 
 
@@ -159,6 +169,7 @@ public class Profile extends Funcs implements excelData{
 				more.click();
 			}catch(Exception e){}
 			WebElement abt = driver.findElement(By.xpath("//*[contains(@class,'UserDescriptionExpandable')]//*[@class='ui_qtext_expanded']"));
+			clickInvisible(driver, abt);
 			desc = abt.getText();
 		}catch(Exception e){System.err.println("about");}
 
@@ -172,6 +183,8 @@ public class Profile extends Funcs implements excelData{
 			WebElement item = stat.findElement(By.xpath(".//*[contains(@class,'AnswersNavItem')]//span"));
 			numof = item.getText();
 			try{
+				if(numof.indexOf(",")!=-1)
+					numof = numof.replaceAll(",", "");
 				answers = Integer.parseInt(numof);
 			}catch(Exception e){e.printStackTrace();}
 		}catch(Exception e){System.err.println("answers");}
@@ -181,6 +194,8 @@ public class Profile extends Funcs implements excelData{
 			WebElement item = stat.findElement(By.xpath(".//*[contains(@class,'QuestionsNavItem')]//span"));
 			numof = item.getText();
 			try{
+				if(numof.indexOf(",")!=-1)
+					numof = numof.replaceAll(",", "");
 				questions = Integer.parseInt(numof);
 			}catch(Exception e){e.printStackTrace();}
 		}catch(Exception e){System.err.println("questions");}
@@ -190,6 +205,8 @@ public class Profile extends Funcs implements excelData{
 			WebElement item = stat.findElement(By.xpath(".//*[contains(@class,'ActivityNavItem')]//span"));
 			numof = item.getText();
 			try{
+				if(numof.indexOf(",")!=-1)
+					numof = numof.replaceAll(",", "");
 				activity = Integer.parseInt(numof);
 			}catch(Exception e){e.printStackTrace();}
 		}catch(Exception e){System.err.println("activity");}
@@ -199,6 +216,8 @@ public class Profile extends Funcs implements excelData{
 			WebElement item = stat.findElement(By.xpath(".//*[contains(@class,'PostsNavItem')]//span"));
 			numof = item.getText();
 			try{
+				if(numof.indexOf(",")!=-1)
+					numof = numof.replaceAll(",", "");
 				posts = Integer.parseInt(numof);
 			}catch(Exception e){e.printStackTrace();}
 		}catch(Exception e){System.err.println("posts");}
@@ -208,6 +227,8 @@ public class Profile extends Funcs implements excelData{
 			WebElement item = stat.findElement(By.xpath(".//*[contains(@class,'BlogsNavItem')]//span"));
 			numof = item.getText();
 			try{
+				if(numof.indexOf(",")!=-1)
+					numof = numof.replaceAll(",", "");
 				blogs = Integer.parseInt(numof);
 			}catch(Exception e){e.printStackTrace();}
 		}catch(Exception e){System.err.println("blogs");}
@@ -217,6 +238,8 @@ public class Profile extends Funcs implements excelData{
 			WebElement item = stat.findElement(By.xpath(".//*[contains(@class,'FollowersNavItem')]//span"));
 			numof = item.getText();
 			try{
+				if(numof.indexOf(",")!=-1)
+					numof = numof.replaceAll(",", "");
 				followers = Integer.parseInt(numof);
 			}catch(Exception e){e.printStackTrace();}
 		}catch(Exception e){System.err.println("followers");}
@@ -226,6 +249,8 @@ public class Profile extends Funcs implements excelData{
 			WebElement item = stat.findElement(By.xpath(".//*[contains(@class,'FollowingNavItem')]//span"));
 			numof = item.getText();
 			try{
+				if(numof.indexOf(",")!=-1)
+					numof = numof.replaceAll(",", "");
 				following = Integer.parseInt(numof);
 			}catch(Exception e){e.printStackTrace();}
 		}catch(Exception e){System.err.println("following");}
@@ -235,6 +260,8 @@ public class Profile extends Funcs implements excelData{
 			WebElement item = stat.findElement(By.xpath(".//*[contains(@class,'TopicsNavItem')]//span"));
 			numof = item.getText();
 			try{
+				if(numof.indexOf(",")!=-1)
+					numof = numof.replaceAll(",", "");
 				topics = Integer.parseInt(numof);
 			}catch(Exception e){e.printStackTrace();}
 		}catch(Exception e){System.err.println("topics");}
@@ -244,12 +271,14 @@ public class Profile extends Funcs implements excelData{
 			WebElement item = stat.findElement(By.xpath(".//*[contains(@class,'OperationsNavItem')]//span"));
 			numof = item.getText();
 			try{
+				if(numof.indexOf(",")!=-1)
+					numof = numof.replaceAll(",", "");
 				edits = Integer.parseInt(numof);
 			}catch(Exception e){e.printStackTrace();}
 		}catch(Exception e){System.err.println("edits");}
 
 
-		p = new Profile(name, slogan, link, work, school, live, desc, views,
+		p = new Profile(name,slogan, link, work, school, live, desc, views,
 				answers, questions, activity, posts, blogs, followers, following, topics, edits);
 
 		return p;

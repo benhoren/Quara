@@ -64,7 +64,7 @@ public class quaraSearch extends Funcs{
 		boolean flag = false;
 
 
-//		for(int i=0; i<5; i++){
+		//		for(int i=0; i<5; i++){
 		try{
 			System.out.println("nav");
 			driver.get(url);
@@ -72,19 +72,21 @@ public class quaraSearch extends Funcs{
 		}	catch(Exception e){System.err.println("WEBDRIVER FAILD");}
 
 
-		if(!flag){
+		while(!flag){
 			try{
-				driver.close();
-				driver.quit();
-			}catch(Exception e){}
+				driver = killDriver(driver);
+				sleep(2000);
+				driver = startWebDriver(url);
+				login();
+				sleep(2000);
+				WebElement field = driver.findElement(By.xpath("//textarea[@class='selector_input text']"));
 
-			driver = startWebDriver(url);
-			login();
+				flag = true;
+			}catch(Exception e){System.err.println("driver error "); }
 		}
 
 		System.out.println("nav end");
-		
-//	}
+
 		WebElement field = driver.findElement(By.xpath("//textarea[@class='selector_input text']"));
 		field.click();
 		field.clear();
@@ -106,7 +108,9 @@ public class quaraSearch extends Funcs{
 			field.sendKeys(textToSearch);
 			sleep(5000);
 
-			field.sendKeys(Keys.RETURN);
+			driver.findElement(By.xpath("//*[@class='selector_result search']")).click();
+			//			field.sendKeys(Keys.RETURN);
+			sleep(3000);
 			WebElement qa = driver.findElement(By.xpath("//*[@data-value='question']"));
 			qa.click();
 			sleep(3000);
@@ -125,20 +129,21 @@ public class quaraSearch extends Funcs{
 
 		for(int i=0; i<topics.length; i++){
 
-			if(topics[i] == null || topics[i].trim().isEmpty())
-				continue;
+			for(int j=0; j<10; j++){ //three times every topic.
+				if(topics[i] == null || topics[i].trim().isEmpty())
+					continue;
 
+				WebElement topicf = driver.findElement(By.xpath("//*[contains(@class,'TopicSelector')]//input[@class='selector_input text']"));
+				topicf.click();
+				topicf.clear();
+				topicf.sendKeys(topics[i]);
 
-			WebElement topicf = driver.findElement(By.xpath("//*[contains(@class,'TopicSelector')]//input[@class='selector_input text']"));
-			topicf.click();
-			topicf.clear();
-			topicf.sendKeys(topics[i]);
-
-			sleep(2500);
-			try{
-				WebElement first = driver.findElement(By.xpath("//li[@class='selector_result topic_alias']"));
-				first.click();
-			}catch(Exception e){System.err.println("topic "+topics[i]+" faild");}
+				sleep(2500);
+				try{
+					WebElement first = driver.findElement(By.xpath("//li[@class='selector_result topic_alias']"));
+					first.click();
+				}catch(Exception e){System.err.println("topic "+topics[i]+" faild");}
+			}
 		}
 	}
 

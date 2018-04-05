@@ -18,21 +18,41 @@ public class Main {
 
 	public static void main(String[] args) {
 
-		String text = "sport";
+		String text = "travel";
 		String topic = "";
-		int  qnum = 1;
-		int  anum = 1;
-		int minViews = 0;
-		int minUpvotes = 0;
-		int minFollows = 250;
+		int  qnum = 10;
+		int  anum = 100;       
+		int minViews = 100;     //per answer
+		int minUpvotes = 100;   //per answer
+		int minFollows = 100; //per question
+
+		start(text, topic, minFollows, minViews, minUpvotes, qnum, anum);
+	}
+
+	public static void start(String text, String topic, int minFollows, int minViews, int minUpvotes, int qnum, int anum){
+
+		if(text == null || text.isEmpty()){
+			mainScreen.addToLog("error: invaild text.");
+			return;
+		}
 
 		play(text, topic, minFollows, minViews, minUpvotes, qnum, anum);
 	}
 
 
+	/**
+	 * 
+	 * @param text text to search
+	 * @param topic topics of the question
+	 * @param minFollows minimum follows on the question
+	 * @param minViews minimum views on answer
+	 * @param minUpvote minimum upvotes on answer
+	 * @param qnum number of questions
+	 * @param anum number of answers per question
+	 */
 	public static void play(String text, String topic, int minFollows, int minViews, int minUpvote, int qnum, int anum){
 
-
+		System.setProperty("webdriver.chrome.logfile", "chromedriver.log");
 
 		quaraSearch qs = new quaraSearch();
 		ArrayList<String> links =qs.start(text, topics(topic),minFollows, qnum);
@@ -49,20 +69,20 @@ public class Main {
 		readyFiles();
 
 		Question.toExcel(questions, QuestionsSheet, AnswersSheet, ProfileSheet, CommentsSheet);
-		
-//		for(int i=0; i<questions.size(); i++){
-//			Funcs.StringArrToLastRow(questions.get(i).toArray(), QuestionsSheet);
-//
-//			for(int j=0; j<questions.get(i).answers.size(); j++){
-//				Funcs.StringArrToLastRow(questions.get(i).answers.get(j).toArray(), AnswersSheet);
-//				try{
-//					for(int k=0; k<questions.get(i).answers.get(j).comments.size(); k++){
-//						Funcs.StringArrToLastRow(questions.get(i).answers.get(j).comments.get(k).toArr(), CommentsSheet);
-//				
-//					}
-//				}catch(Exception e){System.err.println(e);}
-//			}
-//	}
+
+		//		for(int i=0; i<questions.size(); i++){
+		//			Funcs.StringArrToLastRow(questions.get(i).toArray(), QuestionsSheet);
+		//
+		//			for(int j=0; j<questions.get(i).answers.size(); j++){
+		//				Funcs.StringArrToLastRow(questions.get(i).answers.get(j).toArray(), AnswersSheet);
+		//				try{
+		//					for(int k=0; k<questions.get(i).answers.get(j).comments.size(); k++){
+		//						Funcs.StringArrToLastRow(questions.get(i).answers.get(j).comments.get(k).toArr(), CommentsSheet);
+		//				
+		//					}
+		//				}catch(Exception e){System.err.println(e);}
+		//			}
+		//	}
 
 
 		closeWriters();
@@ -132,6 +152,7 @@ public class Main {
 
 		QuestionsSheet = workbook.createSheet("Questions");
 		AnswersSheet = workbook.createSheet("Answers");
+		ProfileSheet = workbook.createSheet("Profiles");
 		CommentsSheet = workbook.createSheet("Comments");
 
 		//{serialNum+"", link, question, stringTags(), views+"", followers+"", answersNum+""};
@@ -141,6 +162,13 @@ public class Main {
 		//questionNum+"", serialNum+"", name, slogan, date, orgQuestion, body, views+"", upvote+""};
 		String[] answ={"question number","num.","name","slogan","date","original question", "answer","views","upvotes"};
 		Funcs.StringArrToLastRow(answ, AnswersSheet);
+
+
+		//{""+questionNum, ""+answerNum, name, slogan, link, work, study, live, about, ""+views,
+		//""+answers, ""+questions, ""+activity, ""+posts, ""+blogs, ""+followers, ""+following, ""+topics,""+ edits};
+		String[] prfls={"question num","answer num.","link","name","slogan","work","live", "study","about","views"
+				,"answers" ,"questions" ,"activity" ,"posts" ,"blogs" ,"followers" ,"following" ,"topics" ,"edits"};
+		Funcs.StringArrToLastRow(prfls, ProfileSheet);
 
 		//{questionNum+"", answerNum+"", serialNum+"", name, body};
 		String[] cmmt={"question number","answer num.","num.","name","body"};

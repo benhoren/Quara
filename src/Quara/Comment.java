@@ -1,7 +1,6 @@
 package Quara;
 
 import java.util.ArrayList;
-
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -183,6 +182,7 @@ public class Comment extends Funcs implements excelData{
 					moveTo2(driver, expand);
 					sleep(1000);
 					expand.click();
+					clickInvisible(driver, expand);
 					sleep(2000);
 
 					System.err.println("morecomm");
@@ -225,6 +225,7 @@ public class Comment extends Funcs implements excelData{
 					WebElement author = cmmts.get(i).findElement(By.className("author_name"));
 					WebElement content = cmmts.get(i).findElement(By.xpath(".//span[@class='ui_qtext_rendered_qtext']"));
 					clickInvisible(driver, content);
+					sleep(2000);
 					try{
 						content = cmmts.get(i).findElement(By.xpath(".//*[contains(@id,'expanded_content')]"));
 					}catch(Exception e){

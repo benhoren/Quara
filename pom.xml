@@ -55,6 +55,11 @@
             <artifactId>google-api-client</artifactId>
             <version>1.22.0</version>
         </dependency>
+		<dependency>
+			<groupId>com.jgoodies</groupId>
+			<artifactId>jgoodies-forms</artifactId>
+			<version>1.8.0</version>
+		</dependency>
     </dependencies>
 
 </project>

@@ -1,6 +1,7 @@
 package Quara;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -21,7 +22,34 @@ public class quoraQA extends Funcs{
 			if(q!=null)
 				questions.add(q);
 		}
+		
+		getProfiles(questions);
+		
 		return questions;
+	}
+
+	private void getProfiles(ArrayList<Question> questions) {
+		String link; Profile p;
+		for(int i=0; i<questions.size(); i++){
+			for(int j=0; j<questions.get(i).answersNum; j++){
+				link = "";
+				p=null;
+				link = questions.get(i).answers.get(j).link;
+				
+				try{
+					p = Profile.getProfile(link);
+				}catch(Exception e){e.printStackTrace();}
+				
+				if(p!=null){
+					p.questionNum = questions.get(i).answers.get(j).questionNum;
+					p.answerNum = questions.get(i).answers.get(j).serialNum;
+					questions.get(i).answers.get(j).profile = p;
+					System.out.println(Arrays.toString(p.toArray()));
+				}	
+				else System.out.println("NULL");
+			}
+		}
+		
 	}
 
 	public Question questionHandle(String link,int num, int minViews, int minUpvote){

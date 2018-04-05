@@ -48,16 +48,20 @@ public class Answer extends Funcs implements excelData{
 		this.upvote = upvote;
 		this.comments = comments;
 	}
-	
-	
+
+
 	public static void toExcel(ArrayList<Answer> answerslist, XSSFSheet a, XSSFSheet p, XSSFSheet c) {
 		for(int i=0; i<answerslist.size(); i++){
 			answerslist.get(i).toSheet(a);
 			Comment.toExcel(answerslist.get(i).comments, c);
+
+			try{
+				answerslist.get(i).profile.toSheet(p);
+			}catch(Exception e){e.printStackTrace();}
 		}
-		
+
 	}
-	
+
 	@Override
 	public String[] toArray(){
 		String[] arr={questionNum+"", serialNum+"", name, slogan, date, orgQuestion, body, views+"", upvote+""};
@@ -78,7 +82,7 @@ public class Answer extends Funcs implements excelData{
 		String name ="", link = "", slogan="", date="";
 
 		System.out.println("get ANSwer");
-		
+
 		try{
 			WebElement more = ansElement.findElement(By.xpath(".//*[contains(@class,'ui_qtext_truncated')]"));
 			moveTo2(driver,more);
@@ -146,7 +150,7 @@ public class Answer extends Funcs implements excelData{
 
 
 		}catch(Exception e){System.err.println("no header " +e);
-			 return null;}
+		return null;}
 
 		String organs ="";
 		try{
@@ -170,6 +174,10 @@ public class Answer extends Funcs implements excelData{
 			int k =1;
 			if(vis.contains("k")){
 				k = 1000;
+				vis = vis.trim().substring(0, vis.length()-1);
+			}
+			if(vis.contains("m")){
+				k = 1000000;
 				vis = vis.trim().substring(0, vis.length()-1);
 			}
 			views = (int)( Double.parseDouble(vis)*k);
@@ -196,8 +204,8 @@ public class Answer extends Funcs implements excelData{
 
 		if(body == null || body.trim().isEmpty())
 			return null;
-//		if(name == null || name.trim().isEmpty() || name.equals("David Moore"))
-//			return null;
+		if(name == null || name.trim().isEmpty())
+			name = "Anonymous";
 
 		ArrayList<Comment> cmmts = null;
 		try{
@@ -215,10 +223,10 @@ public class Answer extends Funcs implements excelData{
 		return answer;
 	}
 
-	
 
 
-	
+
+
 
 
 

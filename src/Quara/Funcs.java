@@ -1,6 +1,7 @@
 package Quara;
 
 import java.io.FileWriter;
+
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -21,6 +22,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.remote.RemoteWebDriver;
+
 
 
 
@@ -421,6 +423,24 @@ public abstract class Funcs {
 		c.add(Calendar.DATE, days);  // number of days to add
 		date = sdf.format(c.getTime());  // dt is now the new date
 		return date;
+	}
+	
+	public static WebDriver killDriver(WebDriver driver){
+		System.out.println("turn off");
+		try{
+			driver.close();
+			driver.quit();
+		}catch(Exception e){}
+
+		try {
+			Runtime.
+			getRuntime().
+			exec("taskkill /im chromedriver.exe /f");
+		} catch (IOException e) {}
+		sleep(2000);
+
+		driver = null;
+		return driver;
 	}
 
 
