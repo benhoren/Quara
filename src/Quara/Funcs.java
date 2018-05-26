@@ -42,7 +42,7 @@ public abstract class Funcs {
 	/**
 	 *  the visibility of the webdriver window. by WindowState enum.
 	 */
-	static WindowState window = WindowState.visible;
+	static WindowState window = WindowState.Invisible;
 	final static String url ="https://www.quora.com/";
 	static WebDriver driver;
 
@@ -237,7 +237,7 @@ public abstract class Funcs {
 		for(int i=0 ;i<arr.length; i++){
 			if(arr[i].length()>30000){
 				expand(arr);
-				break;
+				//break;
 			}
 		}
 

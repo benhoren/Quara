@@ -1,5 +1,6 @@
 package Quara;
 
+import java.io.FileWriter;
 import java.util.ArrayList;
 
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -9,7 +10,7 @@ import org.openqa.selenium.WebElement;
 public class Question extends Funcs implements excelData{
 
 	static int counter = 1;
-	
+
 	String link;
 	String question;
 	int serialNum;
@@ -18,8 +19,8 @@ public class Question extends Funcs implements excelData{
 	int followers;
 	ArrayList<String> tags;
 	ArrayList<Answer> answers;
-	
-	
+
+
 	public Question(){
 		this.serialNum = counter++;
 		link="";
@@ -28,8 +29,8 @@ public class Question extends Funcs implements excelData{
 		views=-1;
 		followers=-1;
 	}
-	
-	
+
+
 	public Question(String link) {
 		this.serialNum = counter++;
 		this.link = link;
@@ -42,21 +43,42 @@ public class Question extends Funcs implements excelData{
 
 
 	public void addQuestionStat(String question, int views, int followers, int answerNum, ArrayList<String> tags){
-		
+
 		this.question = question;
 		this.views = views;
 		this.followers = followers;
 		this.answersNum = answerNum;
 		this.tags = tags;
 	}
-	
-	
-	
-	public static void toExcel(ArrayList<Question> list, XSSFSheet q, XSSFSheet a, XSSFSheet p, XSSFSheet c){
+
+
+
+	public static void toExcel(ArrayList<Question> list, XSSFSheet q, XSSFSheet a, XSSFSheet p, XSSFSheet c, boolean toTxt){
 		for(int i=0; i<list.size(); i++){
 			list.get(i).toSheet(q);
 			Answer.toExcel(list.get(i).answers, a, p, c);	
+			
+			if(toTxt)
+				list.get(i).exportToTxt();
 		}
+		
+	}
+
+
+	private void exportToTxt() {
+		FileWriter writer;
+		String answersStr = wireAnswers();
+		if(this.question == null)
+			question = "";
+		try {
+			
+			writer = new FileWriter(Main.folderName+"/"+this.serialNum+".txt");
+			writer.append(this.question+'\n');
+			
+			writer.append(answersStr+'\n');
+			writer.flush();
+			writer.close();
+		}catch(Exception e){e.printStackTrace();}
 	}
 
 
@@ -65,12 +87,30 @@ public class Question extends Funcs implements excelData{
 		String[] arr = toArray();
 		StringArrToLastRow(arr, sheet);	
 	}
-	
+
 	public String[] toArray(){
 		if(question == null) question="";
-		String[] arr = {serialNum+"",link, question, stringTags(), views+"", followers+"", answersNum+""};
+		String answersStr = wireAnswers();
+		String[] arr = {serialNum+"",link, question, stringTags(), views+"", followers+"", answersNum+"",answersStr,"","","","","","","","","","","","",""};
 		return arr;
-		
+
+	}
+
+
+	private String wireAnswers() {
+		String str = "";
+
+		for(Answer asw : answers){
+			if(asw == null) continue;
+
+			if(asw.body != null)
+				str += asw.body;
+
+			if(asw.allComments() != null)
+				str += " "+asw.allComments();
+		}
+
+		return str;
 	}
 
 
@@ -82,11 +122,11 @@ public class Question extends Funcs implements excelData{
 		str = str.substring(0,str.length()-2);
 		return str;
 	}
-	
-	
-	
-	
-	
+
+
+
+
+
 	public static void getQuestionStat(Question question){
 
 		String head="";
@@ -117,7 +157,7 @@ public class Question extends Funcs implements excelData{
 	private static int getFollows() {
 		WebElement count = driver.findElement(By.xpath("//*[@action_click='QuestionFollow']//span[@class='bullet']/../*[contains(@id,'count')]"));
 		String str = count.getText();
-		
+
 		int k =1;
 		if(str.contains("k")){
 			k=1000;
@@ -207,10 +247,10 @@ public class Question extends Funcs implements excelData{
 	}
 
 
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
 }

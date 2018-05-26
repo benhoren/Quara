@@ -8,7 +8,7 @@ import org.openqa.selenium.WebElement;
 public class Profile extends Funcs implements excelData{
 	int questionNum;
 	int answerNum;
-	
+
 	String name;
 	String slogan;
 	String link;
@@ -77,7 +77,7 @@ public class Profile extends Funcs implements excelData{
 	public String[] toArray() {
 		// TODO Auto-generated method stub
 		String[] arr = {""+questionNum, ""+answerNum, link, name, slogan, work, study, live, about, ""+views,
-				""+answers, ""+questions, ""+activity, ""+posts, ""+blogs, ""+followers, ""+following, ""+topics,""+ edits};
+				""+answers, ""+questions /*,""+activity*/, ""+posts, ""+blogs, ""+followers, ""+following, ""+topics,""+ edits};
 		return arr;
 	}
 
@@ -116,51 +116,52 @@ public class Profile extends Funcs implements excelData{
 
 
 
-		WebElement about = driver.findElement(By.xpath("//*[@class='AboutSection']/*[@class='contents']"));
-
-		//work
 		try{
-			WebElement wrk = about.findElement(By.xpath(".//*[contains(@class,'WorkCredentialListItem')]//*[contains(@class,'UserCredential')]"));
-			work = wrk.getText();
-		}catch(Exception e){System.err.println("work");}
+			WebElement about = driver.findElement(By.xpath("//*[@class='AboutSection']/*[@class='contents']"));
 
-		//school
-		try{
-			WebElement scl = about.findElement(By.xpath(".//*[contains(@class,'SchoolCredentialListItem')]//*[contains(@class,'UserCredential')]"));
-			school = scl.getText();
-		}catch(Exception e){System.err.println("school");}
-
-		//live
-		try{
-			WebElement lv = about.findElement(By.xpath(".//*[contains(@class,'LocationCredentialListItem')]//*[contains(@class,'UserCredential')]"));
-			live = lv.getText();
-		}catch(Exception e){System.err.println("live");}
-
-		//views
-		try{
-			WebElement lv = about.findElement(By.xpath(".//*[contains(@class,'AnswerViewsAboutListItem')]/*[@class='main_text']"));
-			String view = lv.getText();
-			view = view.split(" ")[0];
-			int letter=1;
-			if(view.contains("k")){
-				view = view.substring(0, view.length()-1);
-				letter = 1000;
-			}
-			if(view.contains("m")){
-				view = view.substring(0, view.length()-1);
-				letter = 1000000;
-			}
-
-			double d=0;
+			//work
 			try{
-				System.out.println("view: "+view);
-				d= Double.parseDouble(view);
-				System.out.println("view: "+d);
-			}catch(Exception e){e.printStackTrace();}
+				WebElement wrk = about.findElement(By.xpath(".//*[contains(@class,'WorkCredentialListItem')]//*[contains(@class,'UserCredential')]"));
+				work = wrk.getText();
+			}catch(Exception e){System.err.println("work");}
 
-			views =(int) (d*letter);
-		}catch(Exception e){System.err.println("views");}
+			//school
+			try{
+				WebElement scl = about.findElement(By.xpath(".//*[contains(@class,'SchoolCredentialListItem')]//*[contains(@class,'UserCredential')]"));
+				school = scl.getText();
+			}catch(Exception e){System.err.println("school");}
 
+			//live
+			try{
+				WebElement lv = about.findElement(By.xpath(".//*[contains(@class,'LocationCredentialListItem')]//*[contains(@class,'UserCredential')]"));
+				live = lv.getText();
+			}catch(Exception e){System.err.println("live");}
+
+			//views
+			try{
+				WebElement lv = about.findElement(By.xpath(".//*[contains(@class,'AnswerViewsAboutListItem')]/*[@class='main_text']"));
+				String view = lv.getText();
+				view = view.split(" ")[0];
+				int letter=1;
+				if(view.contains("k")){
+					view = view.substring(0, view.length()-1);
+					letter = 1000;
+				}
+				if(view.contains("m")){
+					view = view.substring(0, view.length()-1);
+					letter = 1000000;
+				}
+
+				double d=0;
+				try{
+					System.out.println("view: "+view);
+					d= Double.parseDouble(view);
+					System.out.println("view: "+d);
+				}catch(Exception e){e.printStackTrace();}
+
+				views =(int) (d*letter);
+			}catch(Exception e){System.err.println("views");}
+		}catch(Exception e){e.printStackTrace(); System.err.println("all abouts FAILD "+link);}
 
 		//about
 		try{
@@ -168,6 +169,12 @@ public class Profile extends Funcs implements excelData{
 				WebElement more = driver.findElement(By.xpath("//*[contains(@class,'UserDescriptionExpandable')]//a[@class='ui_qtext_more_link']"));
 				more.click();
 			}catch(Exception e){}
+			try{
+				WebElement more = driver.findElement(By.xpath("//*[contains(@class,'UserDescriptionExpandable')]//*[@class='ui_qtext_truncated_text']"));
+				more.click();
+				sleep(2000);
+			}catch(Exception e){System.err.println("cant touch this");}
+
 			WebElement abt = driver.findElement(By.xpath("//*[contains(@class,'UserDescriptionExpandable')]//*[@class='ui_qtext_expanded']"));
 			clickInvisible(driver, abt);
 			desc = abt.getText();

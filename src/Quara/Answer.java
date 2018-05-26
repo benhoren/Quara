@@ -51,11 +51,15 @@ public class Answer extends Funcs implements excelData{
 
 
 	public static void toExcel(ArrayList<Answer> answerslist, XSSFSheet a, XSSFSheet p, XSSFSheet c) {
+		if(answerslist == null) return;
 		for(int i=0; i<answerslist.size(); i++){
+			if(answerslist.get(i) == null)
+				continue;
 			answerslist.get(i).toSheet(a);
 			Comment.toExcel(answerslist.get(i).comments, c);
 
 			try{
+				if(answerslist.get(i).profile!=null)
 				answerslist.get(i).profile.toSheet(p);
 			}catch(Exception e){e.printStackTrace();}
 		}
@@ -64,9 +68,26 @@ public class Answer extends Funcs implements excelData{
 
 	@Override
 	public String[] toArray(){
-		String[] arr={questionNum+"", serialNum+"", name, slogan, date, orgQuestion, body, views+"", upvote+""};
+		String cmmts = allComments();
+		String[] arr={questionNum+"", serialNum+"", name, slogan, date, /*orgQuestion,*/ body, views+"", upvote+"",cmmts,"","","",""};
 
 		return arr;
+	}
+
+
+	public String allComments() {
+		if(comments == null)
+		return "";
+		String str = "";
+		
+		for(int i=0; i<comments.size(); i++){
+			if(comments.get(i)==null)
+				continue;
+			if(comments.get(i).body==null)
+				continue;
+			str +=comments.get(i).body;
+		}
+		return str;
 	}
 
 
@@ -121,6 +142,11 @@ public class Answer extends Funcs implements excelData{
 			try{
 				WebElement desc = header.findElement(By.xpath(".//*[contains(@class,'NameCredential')]"));
 				slogan = desc.getText();
+				
+				slogan = slogan.trim();
+				if(slogan.length()>2){
+					slogan = slogan.substring(1, slogan.length());
+				}
 			}catch(Exception e){}
 
 			try{

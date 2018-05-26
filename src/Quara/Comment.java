@@ -123,20 +123,7 @@ public class Comment extends Funcs implements excelData{
 				}catch(Exception e){tries++; if(tries==5) break;}
 			}
 			tries = 0;
-			//			for(int i=0; i<1000; i++){
-			//				try{
-			//					WebElement morecmm = section.findElement(By.xpath(".//*[contains(@class,'Expandable')]//*[contains(@class,'ui_qtext_truncated')]"));
-			//					moveTo2(driver, morecmm);
-			//					sleep(1000);
-			////					morecmm.click();
-			//					clickInvisible(driver, morecmm);
-			//					sleep(2000);
-			//
-			//					System.err.println("more2");
-			//				}catch(Exception e){System.err.println("more2 "+e);tries++; if(tries==5) break;}
-			//			}
-
-
+		
 			if(section == null)
 				System.err.println("IS NULL!!");
 

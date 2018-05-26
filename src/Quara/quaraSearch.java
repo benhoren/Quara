@@ -1,6 +1,7 @@
 package Quara;
 
 import java.util.ArrayList;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
@@ -11,15 +12,30 @@ public class quaraSearch extends Funcs{
 
 
 	final int maxSearch = 10000;
-	final static String mail = "quara.java@gmail.com";
-	final static String password = "b1112222";
+	static String mail = "quara.java@gmail.com";
+	static String password = "b1112222";
+
+	public quaraSearch(String mail2, String password2) {
+
+		if(!mail2.isEmpty() && !password2.isEmpty()){
+			mail = mail2;
+			password = password2;
+		}
+	}
+
 
 	public ArrayList<String> start(String textToSearch, String[] topics,int minFollows, int num){
 		driver = startWebDriver(url);
 
 		if(login())
 			System.out.println("login");
+		else{
+			mainScreen.addToLog("Error: can't log in.");
+			return null;
+		}
+		try{
 		if(!search(textToSearch)) return null;
+		}catch(Exception e){e.printStackTrace(); return null;}
 		selectTopics(topics);
 		ArrayList<String> qlist = questionsList(num, minFollows);
 		System.out.println("found: "+qlist.size());
@@ -49,7 +65,12 @@ public class quaraSearch extends Funcs{
 		WebElement sumbit = flds.findElement(By.xpath(".//input[contains(@class,'submit_button')]"));
 		sumbit.click();
 		sleep(5000);
-		return true;
+		
+		try{
+			flds.findElement(By.xpath(".//input[contains(@class,'submit_button')]"));
+		}catch(Exception e){return true;}
+		
+		return false;
 	}
 
 
@@ -67,7 +88,7 @@ public class quaraSearch extends Funcs{
 		//		for(int i=0; i<5; i++){
 		try{
 			System.out.println("nav");
-			driver.get(url);
+			driver.navigate().to(url);
 			flag = true;
 		}	catch(Exception e){System.err.println("WEBDRIVER FAILD");}
 
@@ -85,6 +106,7 @@ public class quaraSearch extends Funcs{
 			}catch(Exception e){System.err.println("driver error "); }
 		}
 
+		intppt.flag = true;
 		System.out.println("nav end");
 
 		WebElement field = driver.findElement(By.xpath("//textarea[@class='selector_input text']"));
@@ -100,7 +122,8 @@ public class quaraSearch extends Funcs{
 
 		try{
 			WebElement qa = driver.findElement(By.xpath("//*[@data-value='question']"));
-			qa.click();
+			clickInvisible(driver, qa);
+			//			qa.click();
 		}catch(Exception e){
 			field = driver.findElement(By.xpath("//textarea[@class='selector_input text']"));
 			field.click();
@@ -129,7 +152,7 @@ public class quaraSearch extends Funcs{
 
 		for(int i=0; i<topics.length; i++){
 
-			for(int j=0; j<10; j++){ //three times every topic.
+			for(int j=0; j<7; j++){ //three times every topic.
 				if(topics[i] == null || topics[i].trim().isEmpty())
 					continue;
 
@@ -141,7 +164,8 @@ public class quaraSearch extends Funcs{
 				sleep(2500);
 				try{
 					WebElement first = driver.findElement(By.xpath("//li[@class='selector_result topic_alias']"));
-					first.click();
+					//					first.click();
+					clickInvisible(driver, first);
 				}catch(Exception e){System.err.println("topic "+topics[i]+" faild");}
 			}
 		}
@@ -212,7 +236,7 @@ public class quaraSearch extends Funcs{
 						}
 						follow = (int)(Double.parseDouble(c)*k);
 
-					}catch(NumberFormatException e2){e2.printStackTrace();}
+					}catch(NumberFormatException e2){}
 
 				}catch(Exception e){e.printStackTrace();}
 				System.out.println(follow+": "+link);
@@ -221,6 +245,7 @@ public class quaraSearch extends Funcs{
 					questions.add(link);
 					found++;
 					System.out.println("Question "+found+"/"+num);
+					mainScreen.addToLog("Question "+found+"/"+num);
 				} else System.out.println("no");
 				i++;
 			}	

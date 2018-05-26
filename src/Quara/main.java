@@ -25,18 +25,27 @@ public class Main {
 		int minViews = 100;     //per answer
 		int minUpvotes = 100;   //per answer
 		int minFollows = 100; //per question
+		
+		
 
-		start(text, topic, minFollows, minViews, minUpvotes, qnum, anum);
+		start(text, topic, minFollows, minViews, minUpvotes, qnum, anum, "quara.java@gmail.com", "b1112222");
 	}
 
-	public static void start(String text, String topic, int minFollows, int minViews, int minUpvotes, int qnum, int anum){
+	public static void start(String text, String topic, int minFollows, int minViews, int minUpvotes, int qnum, int anum, String mail, String password){
 
+		mainScreen.addToLog("start..");
+		
 		if(text == null || text.isEmpty()){
 			mainScreen.addToLog("error: invaild text.");
 			return;
 		}
+		
 
-		play(text, topic, minFollows, minViews, minUpvotes, qnum, anum);
+//		intppt.mainth = Thread.currentThread();
+//		intppt tr = new intppt(text, topic, minFollows,minViews,minUpvotes,qnum, anum, mail, password);
+//		tr.start();
+
+		play(text, topic, minFollows, minViews, minUpvotes, qnum, anum, mail, password);
 	}
 
 
@@ -50,25 +59,43 @@ public class Main {
 	 * @param qnum number of questions
 	 * @param anum number of answers per question
 	 */
-	public static void play(String text, String topic, int minFollows, int minViews, int minUpvote, int qnum, int anum){
+	public static void play(String text, String topic, int minFollows, int minViews, int minUpvote, int qnum, int anum, String mail, String password){
 
 		System.setProperty("webdriver.chrome.logfile", "chromedriver.log");
-
-		quaraSearch qs = new quaraSearch();
-		ArrayList<String> links =qs.start(text, topics(topic),minFollows, qnum);
+		
+		
+		quaraSearch qs = new quaraSearch(mail, password);
+		ArrayList<String> links = null;
+		try{
+			links = qs.start(text, topics(topic),minFollows, qnum);
+		}catch(Exception e){e.printStackTrace(); mainScreen.addToLog("");}
 		System.out.println();
 
 		if(links == null || links.size() == 0){
 			System.err.println("NO RESULTS");
-			return;
+			 qs = new quaraSearch(mail, password);
+			links = null;
+			try{
+				links = qs.start(text, topics(topic),minFollows, qnum);
+			}catch(Exception e){e.printStackTrace(); mainScreen.addToLog("error");}
+			System.out.println();
+
+			
+			if(links == null || links.size() == 0){
+				System.err.println("NO RESULTS");
+				return;
+			}
+
+			
 		}
 
+		mainScreen.addToLog(links.size()+" questions found");
 		quoraQA qQA = new quoraQA();
 		ArrayList<Question> questions = qQA.start(links, minViews, minUpvote, anum);
 
 		readyFiles();
 
-		Question.toExcel(questions, QuestionsSheet, AnswersSheet, ProfileSheet, CommentsSheet);
+		Question.toExcel(questions, QuestionsSheet, AnswersSheet, ProfileSheet, CommentsSheet, true);
 
 		//		for(int i=0; i<questions.size(); i++){
 		//			Funcs.StringArrToLastRow(questions.get(i).toArray(), QuestionsSheet);
@@ -86,6 +113,9 @@ public class Main {
 
 
 		closeWriters();
+		
+		mainScreen.addToLog("Done.");
+		
 	}
 
 	private static String[] topics(String topic){
@@ -156,18 +186,18 @@ public class Main {
 		CommentsSheet = workbook.createSheet("Comments");
 
 		//{serialNum+"", link, question, stringTags(), views+"", followers+"", answersNum+""};
-		String[] ques={"num.","Link","Question","Tags","Views","Followers","Number of answers"};
+		String[] ques={"num.","Link","Question","Tags","Views","Followers","Number of answers", "answers"};
 		Funcs.StringArrToLastRow(ques, QuestionsSheet);
 
 		//questionNum+"", serialNum+"", name, slogan, date, orgQuestion, body, views+"", upvote+""};
-		String[] answ={"question number","num.","name","slogan","date","original question", "answer","views","upvotes"};
+		String[] answ={"question number","num.","name","slogan","date",/*"original question",*/ "answer","views","upvotes", "comments"};
 		Funcs.StringArrToLastRow(answ, AnswersSheet);
 
 
 		//{""+questionNum, ""+answerNum, name, slogan, link, work, study, live, about, ""+views,
 		//""+answers, ""+questions, ""+activity, ""+posts, ""+blogs, ""+followers, ""+following, ""+topics,""+ edits};
 		String[] prfls={"question num","answer num.","link","name","slogan","work","live", "study","about","views"
-				,"answers" ,"questions" ,"activity" ,"posts" ,"blogs" ,"followers" ,"following" ,"topics" ,"edits"};
+				,"answers" ,"questions" /*,"activity"*/ ,"posts" ,"blogs" ,"followers" ,"following" ,"topics" ,"edits"};
 		Funcs.StringArrToLastRow(prfls, ProfileSheet);
 
 		//{questionNum+"", answerNum+"", serialNum+"", name, body};

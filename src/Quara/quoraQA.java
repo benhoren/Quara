@@ -13,7 +13,7 @@ public class quoraQA extends Funcs{
 	public ArrayList<Question> start(ArrayList<String> links, int minViews, int minUpvote, int num){
 		if(links == null)
 			return null;
-		
+
 		ArrayList<Question> questions = new ArrayList<Question>();
 		Question q;
 		for(String link: links){
@@ -22,8 +22,10 @@ public class quoraQA extends Funcs{
 			if(q!=null)
 				questions.add(q);
 		}
-		
+
 		getProfiles(questions);
+		
+		killDriver(driver);
 		
 		return questions;
 	}
@@ -35,21 +37,24 @@ public class quoraQA extends Funcs{
 				link = "";
 				p=null;
 				link = questions.get(i).answers.get(j).link;
-				
-				try{
-					p = Profile.getProfile(link);
-				}catch(Exception e){e.printStackTrace();}
-				
+
+				if(link != null && !link.isEmpty()){
+					try{
+						p = Profile.getProfile(link);
+					}catch(Exception e){e.printStackTrace();}
+				}
+
 				if(p!=null){
 					p.questionNum = questions.get(i).answers.get(j).questionNum;
 					p.answerNum = questions.get(i).answers.get(j).serialNum;
 					questions.get(i).answers.get(j).profile = p;
 					System.out.println(Arrays.toString(p.toArray()));
+					mainScreen.addToLog("question "+questions.get(i).serialNum+" profile "+(j+1));
 				}	
-				else System.out.println("NULL");
+				else System.out.println("profile NULL");
 			}
 		}
-		
+
 	}
 
 	public Question questionHandle(String link,int num, int minViews, int minUpvote){
@@ -122,6 +127,7 @@ public class quoraQA extends Funcs{
 					answer.serialNum = found;
 					Comment.fixSerialNums(answer.comments,question.serialNum,answer.serialNum);
 					System.out.println("Question "+question.serialNum+" answer "+found);
+					mainScreen.addToLog("Question "+question.serialNum+" answer "+found+"/"+num);
 					Answers.add(answer);
 				}
 			}	
@@ -129,10 +135,6 @@ public class quoraQA extends Funcs{
 		question.answersNum = found;
 		question.answers = Answers;
 	}
-
-
-
-
 
 
 
