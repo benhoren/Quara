@@ -52,9 +52,9 @@ public abstract class Funcs {
 	 * @return started driver
 	 */
 	public WebDriver startWebDriver(String url){
-		
-		
-		
+
+
+
 		if(this.window == WindowState.visible){
 			return startVisibleWebDriver(url);
 		}
@@ -95,6 +95,19 @@ public abstract class Funcs {
 	}
 
 
+	WebDriver startOver(WebDriver driver){
+		String url = "www.google.com";
+		try{
+			url = driver.getCurrentUrl();
+		}catch(Exception e){}
+		driver = killDriver(driver);
+
+		sleep(2000);
+		driver = startWebDriver(url);
+		sleep(2000);
+
+		return driver;
+	}
 
 	/**
 	 * this function open and start new invisible WebDriver
@@ -424,7 +437,7 @@ public abstract class Funcs {
 		date = sdf.format(c.getTime());  // dt is now the new date
 		return date;
 	}
-	
+
 	public static WebDriver killDriver(WebDriver driver){
 		System.out.println("turn off");
 		try{
@@ -453,8 +466,8 @@ public abstract class Funcs {
 		LocalDateTime now = LocalDateTime.now();
 		return dtf.format(now);
 	}
-	
-	
+
+
 	/**
 	 * replase " with ' ' (space)
 	 * @param text
@@ -467,7 +480,7 @@ public abstract class Funcs {
 		}
 		return newStr;
 	}
-	
+
 
 	/**
 	 * remove ',' and '\n' from text, before insert to csv file

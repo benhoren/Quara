@@ -80,7 +80,7 @@ public class Comment extends Funcs implements excelData{
 			moveTo2(driver, section);
 			sleep(1500);
 
-			System.out.println("here");
+			//			System.out.println("here");
 
 			try{
 				WebElement prv = section.findElement(By.xpath(".//*[@class='comment_snippet']"));
@@ -90,8 +90,8 @@ public class Comment extends Funcs implements excelData{
 				clickInvisible(driver, prv);
 				sleep(2500);
 
-				System.err.println("prev");
-			}catch(Exception e){System.err.println("prev fail ");}
+			}catch(Exception e){}
+			//System.err.println("prev");
 
 			try{
 				WebElement all = section.findElement(By.xpath(".//*[@class='toggle_link toggle_all']"));
@@ -101,8 +101,8 @@ public class Comment extends Funcs implements excelData{
 				//				all.click();
 				sleep(2500);
 
-				System.err.println("all");
-			}catch(Exception e){System.err.println("no all ");}
+				//System.err.println("all");
+			}catch(Exception e){}
 
 
 
@@ -119,31 +119,32 @@ public class Comment extends Funcs implements excelData{
 					clickInvisible(driver, morecmm);
 					sleep(2000);
 
-					System.err.println("more1");
+					//					System.err.println("more1");
 				}catch(Exception e){tries++; if(tries==5) break;}
 			}
 			tries = 0;
-		
-			if(section == null)
-				System.err.println("IS NULL!!");
 
-			try{
-				WebElement coll = section.findElement(By.xpath(".//*[contains(@class,'collapsed_comments_link')]"));
-				moveTo2(driver, coll);
-				sleep(1000);
-				clickInvisible(driver, coll);
-				//				coll.click();
-				sleep(2000);
+			if(section == null){
+				//System.err.println("IS NULL!!");
 
-				System.err.println("collapse");
-			}catch(Exception e){System.err.println("collapse fail");}
+				try{
+					WebElement coll = section.findElement(By.xpath(".//*[contains(@class,'collapsed_comments_link')]"));
+					moveTo2(driver, coll);
+					sleep(1000);
+					clickInvisible(driver, coll);
+					//				coll.click();
+					sleep(2000);
+
+					//System.err.println("collapse");
+				}catch(Exception e){}
+			}
 
 			tries = 0;
 			int size = 0;
 			for(int i=0; i<10; i++){
-				System.out.println("round");
+				//System.out.println("round");
 				try{
-					
+
 					ArrayList<WebElement>showchild = 
 							(ArrayList<WebElement>) section.findElements(By.xpath(".//*[@class='show_child_link']"));
 					if(size == showchild.size())
@@ -157,7 +158,7 @@ public class Comment extends Funcs implements excelData{
 						sleep(2000);
 					}
 
-					System.err.println("child");
+					//System.err.println("child");
 				}catch(Exception e){tries++; if(tries==5) break;}
 			}
 
@@ -172,7 +173,7 @@ public class Comment extends Funcs implements excelData{
 					clickInvisible(driver, expand);
 					sleep(2000);
 
-					System.err.println("morecomm");
+					//	System.err.println("morecomm");
 				}catch(Exception e){tries++; if(tries==5) break;}
 			}
 
@@ -180,7 +181,7 @@ public class Comment extends Funcs implements excelData{
 			try{
 				getComments(cmmts, section);
 			}catch(Exception e){e.printStackTrace(); return cmmts;}
-		}catch(Exception e){e.printStackTrace(); return null;}
+		}catch(Exception e){/*e.printStackTrace();*/ return null;}
 
 		return cmmts;
 	}
@@ -195,14 +196,12 @@ public class Comment extends Funcs implements excelData{
 
 	private static void getComments(ArrayList<Comment> comments, WebElement section) {
 
-		System.out.println("COMMENTS");		
 		Comment.counter = 1;
 
 		try{
 			ArrayList<WebElement> cmmts = (ArrayList<WebElement>) 
 					section.findElements(By.xpath(".//*[contains(@id,'container_all')]//*[contains(@class,'comment_list_level_0')]//*[@class='comment_contents']"));
 
-			System.out.println("web comment "+cmmts.size());
 
 			Comment c=null;
 			String name, body;
@@ -224,7 +223,7 @@ public class Comment extends Funcs implements excelData{
 
 					name = author.getText();
 					body += content.getText();
-					
+
 					c = new Comment(name, body);
 					comments.add(c);
 				}catch(Exception e){e.printStackTrace();}

@@ -16,7 +16,15 @@ public class quoraQA extends Funcs{
 
 		ArrayList<Question> questions = new ArrayList<Question>();
 		Question q;
+		
+		int count = 0;
 		for(String link: links){
+			count++;
+			if(count %5 == 0 ){
+				System.out.println("**START OVER**");
+				driver = startOver(driver);
+			}
+				
 			q = questionHandle(link, num, minViews, minUpvote);
 
 			if(q!=null)
@@ -32,10 +40,19 @@ public class quoraQA extends Funcs{
 
 	private void getProfiles(ArrayList<Question> questions) {
 		String link; Profile p;
+		int count = 0 ;
 		for(int i=0; i<questions.size(); i++){
 			for(int j=0; j<questions.get(i).answersNum; j++){
 				link = "";
 				p=null;
+				
+				count++;
+				if(count %10 == 0 ){
+					System.out.println("**START OVER**");
+					driver = startOver(driver);
+				}
+				
+				
 				link = questions.get(i).answers.get(j).link;
 
 				if(link != null && !link.isEmpty()){
@@ -59,11 +76,14 @@ public class quoraQA extends Funcs{
 
 	public Question questionHandle(String link,int num, int minViews, int minUpvote){
 		Question question = new Question(link);
+		try{
 		driver.navigate().to(link);
+		}catch(Exception e){e.printStackTrace(); return null;}
 		Question.getQuestionStat(question);
 
+		try{
 		getQuestionAnswers(question,num, minViews, minUpvote);
-
+		}catch(Exception e){e.printStackTrace();}
 		return question;
 	}
 
@@ -91,6 +111,7 @@ public class quoraQA extends Funcs{
 
 			if(i >= results.size()){
 				int size = results.size();
+				if(size < 0)
 				moveTo2(driver, results.get(size-1));
 				try{
 					JavascriptExecutor jse = (JavascriptExecutor)driver;

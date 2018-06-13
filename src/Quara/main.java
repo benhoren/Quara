@@ -25,8 +25,8 @@ public class Main {
 		int minViews = 100;     //per answer
 		int minUpvotes = 100;   //per answer
 		int minFollows = 100; //per question
-		
-		
+
+
 
 		start(text, topic, minFollows, minViews, minUpvotes, qnum, anum, "quara.java@gmail.com", "b1112222");
 	}
@@ -34,18 +34,20 @@ public class Main {
 	public static void start(String text, String topic, int minFollows, int minViews, int minUpvotes, int qnum, int anum, String mail, String password){
 
 		mainScreen.addToLog("start..");
-		
+
 		if(text == null || text.isEmpty()){
 			mainScreen.addToLog("error: invaild text.");
 			return;
 		}
-		
 
-//		intppt.mainth = Thread.currentThread();
-//		intppt tr = new intppt(text, topic, minFollows,minViews,minUpvotes,qnum, anum, mail, password);
-//		tr.start();
 
-		play(text, topic, minFollows, minViews, minUpvotes, qnum, anum, mail, password);
+		//		intppt.mainth = Thread.currentThread();
+		//		intppt tr = new intppt(text, topic, minFollows,minViews,minUpvotes,qnum, anum, mail, password);
+		//		tr.start();
+
+		try{
+			play(text, topic, minFollows, minViews, minUpvotes, qnum, anum, mail, password);
+		}catch(Exception e){e.printStackTrace(); mainScreen.addToLog("Internal Error");}
 	}
 
 
@@ -62,8 +64,8 @@ public class Main {
 	public static void play(String text, String topic, int minFollows, int minViews, int minUpvote, int qnum, int anum, String mail, String password){
 
 		System.setProperty("webdriver.chrome.logfile", "chromedriver.log");
-		
-		
+
+
 		quaraSearch qs = new quaraSearch(mail, password);
 		ArrayList<String> links = null;
 		try{
@@ -73,20 +75,20 @@ public class Main {
 
 		if(links == null || links.size() == 0){
 			System.err.println("NO RESULTS");
-			 qs = new quaraSearch(mail, password);
+			qs = new quaraSearch(mail, password);
 			links = null;
 			try{
 				links = qs.start(text, topics(topic),minFollows, qnum);
 			}catch(Exception e){e.printStackTrace(); mainScreen.addToLog("error");}
 			System.out.println();
 
-			
+
 			if(links == null || links.size() == 0){
 				System.err.println("NO RESULTS");
 				return;
 			}
 
-			
+
 		}
 
 		mainScreen.addToLog(links.size()+" questions found");
@@ -113,9 +115,9 @@ public class Main {
 
 
 		closeWriters();
-		
+
 		mainScreen.addToLog("Done.");
-		
+
 	}
 
 	private static String[] topics(String topic){

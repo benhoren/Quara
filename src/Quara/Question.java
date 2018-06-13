@@ -57,11 +57,11 @@ public class Question extends Funcs implements excelData{
 		for(int i=0; i<list.size(); i++){
 			list.get(i).toSheet(q);
 			Answer.toExcel(list.get(i).answers, a, p, c);	
-			
+
 			if(toTxt)
 				list.get(i).exportToTxt();
 		}
-		
+
 	}
 
 
@@ -71,10 +71,10 @@ public class Question extends Funcs implements excelData{
 		if(this.question == null)
 			question = "";
 		try {
-			
+
 			writer = new FileWriter(Main.folderName+"/"+this.serialNum+".txt");
 			writer.append(this.question+'\n');
-			
+
 			writer.append(answersStr+'\n');
 			writer.flush();
 			writer.close();
@@ -134,19 +134,19 @@ public class Question extends Funcs implements excelData{
 		ArrayList<String> tags=null;
 		try{
 			head = getQuestion();
-		}catch(Exception e){e.printStackTrace();}
+		}catch(Exception e){}
 		try{
 			answersNum = getAnswerNum();
-		}catch(Exception e){e.printStackTrace();}
+		}catch(Exception e){}
 		try{
 			views = getViews();
-		}catch(Exception e){e.printStackTrace();}
+		}catch(Exception e){}
 		try{
 			follows = getFollows();
-		}catch(Exception e){e.printStackTrace();}
+		}catch(Exception e){}
 		try{
 			tags = getTags();
-		}catch(Exception e){e.printStackTrace();}
+		}catch(Exception e){}
 
 
 		System.out.println(head+" "+'\n'+views+" "+'\n'+follows+" "+'\n'+answersNum+" "+'\n'+tags.toString());
@@ -200,8 +200,14 @@ public class Question extends Funcs implements excelData{
 
 	public static String getQuestion(){
 		String str="";
-		WebElement title = driver.findElement(By.xpath("//*[contains(@class,'QuestionArea')]//*[@class='rendered_qtext']"));
+		try{
+			WebElement title = driver.findElement(By.xpath("//*[contains(@class,'QuestionArea')]//*[@class='rendered_qtext']"));
+			str= title.getText();
+		}catch(Exception e){System.err.println("Question 206" + e);
+		WebElement title = driver.findElement(By.xpath("//*[contains(@class,'QuestionArea')]//h1"));
 		str= title.getText();
+		}
+
 		return str;
 	}
 

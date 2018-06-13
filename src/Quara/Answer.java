@@ -102,7 +102,6 @@ public class Answer extends Funcs implements excelData{
 	public static Answer getAnswer(WebElement ansElement, int serialQuestion) {
 		String name ="", link = "", slogan="", date="";
 
-		System.out.println("get ANSwer");
 
 		try{
 			WebElement more = ansElement.findElement(By.xpath(".//*[contains(@class,'ui_qtext_truncated')]"));
@@ -115,7 +114,6 @@ public class Answer extends Funcs implements excelData{
 			try{
 				WebElement closePhoto = driver.findElement(By.xpath("//*[@class='photo_modal_close active']"));
 				closePhoto.click();
-				System.out.println("closephoto");
 			}catch(Exception e){}
 
 		}catch(Exception e){}
@@ -226,7 +224,7 @@ public class Answer extends Funcs implements excelData{
 				}
 				upvt = (int) (Double.parseDouble(fll)*k);
 			}
-		}catch(Exception e){e.printStackTrace();}
+		}catch(Exception e){/*e.printStackTrace();*/}
 
 		if(body == null || body.trim().isEmpty())
 			return null;
@@ -235,7 +233,6 @@ public class Answer extends Funcs implements excelData{
 
 		ArrayList<Comment> cmmts = null;
 		try{
-			System.out.println("COMM");
 			cmmts = Comment.getComments(ansElement);
 
 			if(cmmts!=null)
